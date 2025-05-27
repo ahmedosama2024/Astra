@@ -17,4 +17,19 @@ class Category extends Model
     {
         return $this->belongsToMany(Product::class);
     }
+
+    ## Other methods
+
+    public function remove(): bool
+    {
+        $products = $this->products()->get();
+        $this->products()->detach();
+        $this->delete();
+        foreach ($products as $product) {
+            if ($product->categories()->count() == 0) {
+                $product->delete();
+            }
+        }
+        return true;
+    }
 }
