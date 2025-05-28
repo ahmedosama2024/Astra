@@ -14,6 +14,14 @@ class PriceResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'price' => $this->price,
+            'start_date' => $this->start_date,
+            'end_date' => $this->end_date,
+            'product_id' => $this->product_id,
+            'created' => $this->created_at,
+            'updated' => $this->updated_at,
+        ];
     }
 }

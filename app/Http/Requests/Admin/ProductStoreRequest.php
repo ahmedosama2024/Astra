@@ -28,8 +28,7 @@ class ProductStoreRequest extends FormRequest
             'name' => 'required|string|min:3|max:50|unique:products,name',
             'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'description' => 'required|string|min:10|max:2000',
-            'categories' => 'required|array|min:1|max:5',
-            'categories.*' => 'exists:categories,id',
+            'price' => 'required|numeric|min:1|max:10000'
         ];
     }
 
@@ -41,7 +40,15 @@ class ProductStoreRequest extends FormRequest
             'image' => $this->image->store('products', 'public'),
             'description' => $this->description,
             ]);
-            $product->categories()->sync($this->categories);
+
+            $product->categories()->sync($this->category->id);
+
+            $product->prices()->create([
+                'price' => $this->price,
+                'start_date' => now(),
+                'end_date' => null,
+                'product_id' => $product->id,
+            ]);
         
             return $product->refresh();
         });

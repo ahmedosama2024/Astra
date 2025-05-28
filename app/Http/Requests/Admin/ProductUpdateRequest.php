@@ -44,7 +44,8 @@ class ProductUpdateRequest extends FormRequest
     {
         return DB::transaction(function () {
             if ($this->exists('image')) {
-                Storage::delete($this->product->image);
+                Storage::disk('public')->delete($this->product->image);
+
             }
 
             $this->product->update([
@@ -52,7 +53,9 @@ class ProductUpdateRequest extends FormRequest
                 'image' => $this->exists('image') ? $this->image->store('products', 'public') : $this->product->image,
                 'description' => $this->exists('description') ? $this->description : $this->product->description,
             ]);
-            $this->product->categories()->sync($this->categories);
+            if ($this->exists('categories')) {
+                $this->product->categories()->sync($this->categories);
+            }
 
             return $this->product->refresh();
         });
