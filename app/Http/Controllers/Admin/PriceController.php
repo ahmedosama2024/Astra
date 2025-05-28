@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\PriceStoreRequest;
 use App\Http\Requests\Admin\PriceUpdateRequest;
 use App\Http\Resources\Admin\PriceResource;
 use App\Models\Price;
+use Illuminate\Support\Facades\Gate;
 
 class PriceController extends Controller
 {
@@ -15,6 +16,7 @@ class PriceController extends Controller
      */
     public function index()
     {
+        Gate::authorize('viewAny', Price::class);
         $prices = Price::all();
 
         return PriceResource::collection($prices);
@@ -25,6 +27,7 @@ class PriceController extends Controller
      */
     public function store(PriceStoreRequest $request)
     {
+        Gate::authorize('create', Price::class);
         $price = $request->storePrice();
 
         return response([
@@ -38,6 +41,8 @@ class PriceController extends Controller
      */
     public function show(Price $price)
     {
+        Gate::authorize('view', $price);
+
         return response([
             'price' => new PriceResource($price),
         ]);
@@ -48,6 +53,7 @@ class PriceController extends Controller
      */
     public function update(PriceUpdateRequest $request, Price $price)
     {
+        Gate::authorize('update', $price);
         $price = $request->updatePrice();
 
         return response([
@@ -61,6 +67,7 @@ class PriceController extends Controller
      */
     public function destroy(Price $price)
     {
+        Gate::authorize('delete', $price);
         $price->remove();
 
         return response([

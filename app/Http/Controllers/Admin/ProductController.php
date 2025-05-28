@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\ProductUpdateRequest;
 use App\Http\Resources\Admin\ProductResource;
 use App\Models\Category;
 use App\Models\Product;
+use Illuminate\Support\Facades\Gate;
 
 class ProductController extends Controller
 {
@@ -16,6 +17,7 @@ class ProductController extends Controller
      */
     public function index(Category $category)
     {
+        Gate::authorize('viewAny', Product::class);
         $products = $category->products()->with('categories', 'prices')->paginate(10);
         
         return ProductResource::collection($products);
@@ -26,6 +28,7 @@ class ProductController extends Controller
      */
     public function store(ProductStoreRequest $request, Category $category)
     {
+        Gate::authorize('create', Product::class);
         $product = $request->storeProduct();
 
         return response([
@@ -39,6 +42,8 @@ class ProductController extends Controller
      */
     public function show(Category $category, Product $product)
     {
+        Gate::authorize('view', $product);
+
         return response([
             'product' => new ProductResource($product),
         ]);
@@ -49,6 +54,7 @@ class ProductController extends Controller
      */
     public function update(ProductUpdateRequest $request, Category $category, Product $product)
     {
+        Gate::authorize('update', $product);
         $product = $request->updateProduct();
 
         return response([
@@ -62,6 +68,7 @@ class ProductController extends Controller
      */
     public function destroy(Category $category, Product $product)
     {
+        Gate::authorize('delete', $product);
         $product->remove();
 
         return response([
