@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->decimal('price', 10, 2);
             $table->dateTime('start_date');
-            $table->dateTime('end_date');
+            $table->dateTime('end_date')->nullable();
             $table->unsignedBigInteger('product_id');
             $table->timestamps();
         });

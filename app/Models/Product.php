@@ -28,4 +28,29 @@ class Product extends Model
     {
         return $this->hasMany(Price::class);
     }
+
+    ## Getters and Setters
+
+    public function getPriceAttribute()
+    {
+        $date = now();
+        return $this->prices
+        ->where('start_date', '<=', $date)
+        ->where(function ($query) use ($date) {
+            return $query->where('end_date', '>=', $date)
+                        ->orWhereNull('end_date');
+        })
+        ->sortByDesc('start_date')
+        ->first();
+    }
+
+    ## Other methods
+
+    public function remove(): bool
+    {
+        $this->categories()->detach();
+        $this->prices()->delete();
+        $this->delete();
+        return true;
+    }
 }

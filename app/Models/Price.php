@@ -31,4 +31,12 @@ class Price extends Model
     {
         return $this->belongsTo(Product::class);    
     }
+
+    ## Other methods
+
+    public function remove(): bool
+    {
+        $this->delete();
+        return true;
+    }
 }
